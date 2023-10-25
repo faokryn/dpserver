@@ -2,8 +2,11 @@
 
 # First of all, we need to install the basic dependencies.
 # This is distro specific.
-DISTRO=$(lsb_release -is)
-bash ./setup.$DISTRO.sh || (echo "There is no setup script for $DISTRO :(" ; exit 1)
+source /etc/os-release
+for distro in $ID $ID_LIKE NONE; do
+	if [ -f ./setup.$distro.sh ]; then echo "Trying setup.$distro.sh" && bash ./setup.$distro.sh && break; fi
+	if [ "$distro" == "NONE" ]; then echo "There is no setup script for $ID :(" >&2; exit 1; fi
+done
 
 
 mkdir -p session-templates
